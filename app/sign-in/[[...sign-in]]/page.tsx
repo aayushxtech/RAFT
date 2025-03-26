@@ -1,5 +1,4 @@
 import { SignIn } from "@clerk/nextjs";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function SignInPage() {
@@ -7,13 +6,6 @@ export default function SignInPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
       <div className="relative mb-8">
         <Link href="/" className="flex items-center space-x-2">
-          <Image
-            src=""
-            alt="RAFT Logo"
-            width={40}
-            height={40}
-            className="rounded-lg"
-          />
           <span className="text-2xl font-bold">RAFT</span>
         </Link>
       </div>

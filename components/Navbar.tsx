@@ -1,18 +1,52 @@
 "use client";
 
-import React from "react";
-import { SignedOut, SignedIn, SignInButton, UserButton } from "@clerk/nextjs";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center px-4">
         <div className="flex flex-1 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-xl">
+                R
+              </span>
+            </div>
             <p className="text-2xl font-bold">RAFT</p>
           </Link>
 
@@ -34,28 +68,24 @@ const Navbar = () => {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-4">
-            <SignedOut>
-              <SignInButton mode="modal">
+            {!user ? (
+              <Link href="/login">
                 <Button variant="outline" size="sm">
                   Sign In
                 </Button>
-              </SignInButton>
-            </SignedOut>
-            <SignedIn>
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className="mr-4">
-                  Dashboard
-                </Button>
               </Link>
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "h-8 w-8",
-                  },
-                }}
-              />
-            </SignedIn>
+            ) : (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  Sign Out
+                </Button>
+              </>
+            )}
 
             {/* Hamburger Menu Button */}
             <button
@@ -109,6 +139,25 @@ const Navbar = () => {
                 About
               </Button>
             </Link>
+            {user && (
+              <>
+                <Link href="/dashboard" onClick={() => setIsOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={() => {
+                    handleSignOut();
+                    setIsOpen(false);
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}

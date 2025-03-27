@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../app/globals.css";
 import { ReactNode } from "react";
-import { ClerkProvider } from "@clerk/nextjs";
+
 import { Inter } from "next/font/google";
 
 const geistSans = Geist({
@@ -34,15 +34,13 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <ClerkProvider>
-      <html
-        lang="en"
-        className={`${inter.variable} ${geistSans.variable} ${geistMono.variable}`}
-        suppressHydrationWarning
-      >
-        <body className="antialiased">{children}</body>
-      </html>
-    </ClerkProvider>
+    <html
+      lang="en"
+      className={`${inter.variable} ${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased">{children}</body>
+    </html>
   );
 };
 

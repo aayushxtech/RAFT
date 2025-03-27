@@ -1,7 +1,7 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import React from "react";
-import { SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 const Home = () => {
   const steps = [
@@ -185,11 +185,12 @@ const Home = () => {
             </h2>
           </div>
           <div className="text-center">
-            <SignUpButton mode="modal">
+            <Link href="/login">
               <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
                 Get Started with RAFT
               </button>
-            </SignUpButton>
+            </Link>
+
             <p className="mt-3 text-sm text-gray-600">
               Join our community and start sharing resources today
             </p>
